@@ -1,76 +1,21 @@
-# Congratulations on Your README!
+<img width="458" height="313" alt="logo" src="https://github.com/user-attachments/assets/9abc45e2-2388-4158-9c4e-81f3fe260a5d" />
 
-If you’re reading this, congratulations — you’ve successfully opened a **README file**.  
-That may seem simple, but it’s actually an important first step in learning how modern technical projects are documented and shared.
 
-This file is written in **Markdown**, a lightweight formatting language used across the tech industry.
+# Net-PY
 
----
-
-## What Is a README?
-
-A README is usually the **first thing someone sees** when they open a project.  
-It answers key questions like:
-
-- What is this project?
-- How do I use it?
-- Why does it exist?
-- Who is it for?
-
-Well-written READMEs make projects easier to understand, use, and maintain.
+This project, 'Net-PY', is a Python-based tool that you can use to detect when a device connects to your local area network by listening for ARP traffic
+Net-PY  monitors ARP traffic and identifies devices by 
+IP Address
+Mac Address
+Time of discovery
 
 ---
 
-## What Is Markdown?
+## Installation
 
-Markdown is a plain-text language that allows you to add formatting such as:
+Install the required dependency:
 
-- Headings
-- Lists
-- Links
-- Code blocks
-- Emphasis (bold / italics)
+```bash
+pip install scapy
 
-Without using complex tools or word processors.
-
-Markdown files typically end in `.md`, like this one: `README.md`.
-
----
-
-## Why Markdown Matters
-
-Markdown is used **everywhere**, including:
-
-- GitHub and GitLab repositories
-- Technical documentation
-- Security reports
-- Open-source projects
-- Blogs and knowledge bases
-
-If you work in **IT, cybersecurity, software development, or data**, you *will* encounter Markdown.
-
-Learning it now gives you a real, transferable skill.
-
----
-
-## What You Should Practice
-
-As a student, you should practice:
-
-- Editing this file
-- Adding your own sections
-- Creating lists and headings
-- Writing clear explanations in plain language
-
-Try modifying this README to describe **your project**, **your lab**, or **your assignment**.
-
----
-
-## Final Thought
-
-Markdown isn’t about making things “look nice” — it’s about **communicating clearly**.
-
-If someone else can understand your work just by reading your README,  
-you’re already thinking like a professional.
-
-Good luck, and welcome to Markdown!
+Run Net-Py.py
