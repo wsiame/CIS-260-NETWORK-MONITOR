@@ -4,10 +4,7 @@
 # Net-PY
 
 This project, 'Net-PY', is a Python-based tool that you can use to detect when a device connects to your local area network by listening for ARP traffic
-Net-PY  monitors ARP traffic and identifies devices by 
-IP Address
-Mac Address
-Time of discovery
+Net-PY  monitors ARP traffic and identifies devices by IP Address, Mac Address, and Time of discovery
 
 ---
 
