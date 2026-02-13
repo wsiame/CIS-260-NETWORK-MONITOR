@@ -55,13 +55,11 @@ Note: Npcap is required for packet sniffing to work on Windows
 Install Scapy:
 
 python3 -m pip install scapy
-```
 
 #### Running on Linux
 
 Net-PY requires root privileges to capture network packets:
 
 sudo python3 net.py
-```
 
----
+
