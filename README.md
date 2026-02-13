@@ -33,7 +33,7 @@ Add Python to PATH
 **2. Scapy (Python library)**
 
 Install Scapy using pip:
-```bash
+
 python -m pip install scapy
 
 **3. Npcap (Packet capture driver)**
@@ -53,14 +53,14 @@ Note: Npcap is required for packet sniffing to work on Windows
 **Scapy (Python library)**
 
 Install Scapy:
-```bash
+
 python3 -m pip install scapy
 ```
 
 #### Running on Linux
 
 Net-PY requires root privileges to capture network packets:
-```bash
+
 sudo python3 net.py
 ```
 
