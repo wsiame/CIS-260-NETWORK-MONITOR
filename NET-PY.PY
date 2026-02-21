@@ -3,6 +3,9 @@
 from scapy.all import sniff, ARP
 from datetime import datetime
 
+# How would you know? via Mac Address. MAC Spoofing? 
+# known_devices[mac] = ip? What if the mac adress is in the table but its another IP? 
+# IPS systems. Snort
 known_devices = {}
 
 def handle_packet(packet):
