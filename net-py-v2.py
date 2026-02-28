@@ -11,7 +11,7 @@ def handle_packet(packet):
         ip = packet[ARP].psrc
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        # ✅ New device (print only once per MAC)
+        # New device (print only once per MAC)
         if mac not in known_devices:
             known_devices[mac] = ip
             print("\n[NEW DEVICE]")
@@ -19,18 +19,18 @@ def handle_packet(packet):
             print(f"  IP:   {ip}")
             print(f"  MAC:  {mac}")
 
-        # ⚠ Same MAC, different IP (could be DHCP change or spoofing indicator)
+        # Same MAC, different IP (could be DHCP change or spoofing indicator)
         elif known_devices[mac] != ip:
             old_ip = known_devices[mac]
             known_devices[mac] = ip
-            print("\n[⚠ IP CHANGE DETECTED]")
+            print("\n[IP CHANGE DETECTED]")
             print(f"  Time:   {timestamp}")
             print(f"  MAC:    {mac}")
             print(f"  Old IP: {old_ip}")
             print(f"  New IP: {ip}")
 
 def main():
-    print("Net-PY Advanced ARP Monitor Running...")
+    print("Networking Advanced ARP Monitor Running...")
     print("Press CTRL+C to stop.\n")
     sniff(filter="arp", prn=handle_packet, store=False)
 
