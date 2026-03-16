@@ -1,17 +1,35 @@
 # Net-PY
 
-This project, 'Net-PY', is a Python-based tool that you can use to detect when a device connects to your local area network by listening for ARP traffic
-Net-PY  monitors ARP traffic and identifies devices by IP Address, Mac Address, and Time of discovery
+Net-PY is a Python-based network monitoring dashboard that combines three functions into one application:
+
+A Flask web dashboard for viewing network activity
+
+A live ARP packet sniffer using Scapy
+
+A syslog UDP listener for receiving Dynamic ARP Inspection (DAI) drops from a switch
+
+The application helps detect suspicious ARP behavior, track devices seen on the network, and display alerts and events in a web interface.
 
 ---
 
 
 ## Features
 
-- Real-time ARP traffic monitoring
-- Device detection and identification
-- Tracks IP addresses, MAC addresses, and connection times
-- Cross-platform support (Windows & Linux)
+Monitors ARP traffic in real time with Scapy
+
+Receives syslog messages on UDP port 514
+
+Tracks known devices by MAC and IP address
+
+Detects duplicate IP usage
+
+Flags trusted binding violations
+
+Stores devices, alerts, and events in a JSON file
+
+Displays all data in a browser-based dashboard
+
+Cross-platform support (Windows & Linux)
 
 ## Installation
 
@@ -42,6 +60,9 @@ During installation, make sure to check:
 Install Npcap in WinPcap API-compatible Mode
 Note: Npcap is required for packet sniffing to work on Windows
 
+Install flask using pip:
+-m pip install flask 
+
 
 ### Linux
 
@@ -52,6 +73,8 @@ Note: Npcap is required for packet sniffing to work on Windows
 Install Scapy:
 
 python3 -m pip install scapy
+
+pip3 install flask scapy
 
 #### Running on Linux
 
