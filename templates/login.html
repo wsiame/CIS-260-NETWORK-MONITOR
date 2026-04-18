@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Net-PY — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07090d;--surface:#0d1117;--border:#1b2230;--border-focus:#2f81f7;
+  --text:#e6edf3;--muted:#484f58;--accent:#2f81f7;--accent-glow:rgba(47,129,247,0.15);
+  --danger:#da3633;--danger-soft:rgba(218,54,51,0.12);
+}
+html,body{height:100%;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+}
+
+/* animated background grid */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    linear-gradient(rgba(47,129,247,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,129,247,0.03) 1px, transparent 1px);
+  background-size:60px 60px;
+  animation:gridShift 20s linear infinite;
+}
+@keyframes gridShift{to{background-position:60px 60px;}}
+
+/* subtle radial glow behind card */
+body::after{
+  content:'';position:fixed;top:50%;left:50%;
+  width:600px;height:600px;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(47,129,247,0.06) 0%,transparent 70%);
+  z-index:0;pointer-events:none;
+}
+
+.login-card{
+  position:relative;z-index:1;
+  width:380px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:40px 36px 36px;
+  box-shadow:0 24px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.02) inset;
+  animation:cardIn 0.5s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes cardIn{
+  from{opacity:0;transform:translateY(20px) scale(0.97);}
+  to{opacity:1;transform:translateY(0) scale(1);}
+}
+
+.logo{
+  font-family:'JetBrains Mono',monospace;font-weight:700;
+  font-size:22px;letter-spacing:-0.5px;margin-bottom:4px;
+  display:flex;align-items:center;gap:10px;
+}
+.logo .dot{
+  width:10px;height:10px;border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 12px var(--accent),0 0 4px var(--accent);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.subtitle{color:var(--muted);font-size:13px;font-weight:300;margin-bottom:32px;}
+
+label{
+  display:block;font-size:12px;font-weight:500;
+  color:var(--muted);margin-bottom:6px;
+  letter-spacing:0.5px;text-transform:uppercase;
+  font-family:'JetBrains Mono',monospace;
+}
+input{
+  width:100%;padding:11px 14px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  font-size:14px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+input:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px var(--accent-glow);}
+input::placeholder{color:var(--muted);}
+.field{margin-bottom:20px;}
+
+.btn-login{
+  width:100%;padding:12px;
+  background:var(--accent);color:#fff;border:none;
+  border-radius:8px;font-size:14px;font-weight:600;
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  cursor:pointer;letter-spacing:0.2px;
+  transition:background 0.15s,transform 0.1s,box-shadow 0.15s;
+}
+.btn-login:hover{background:#1a6fe0;box-shadow:0 4px 20px rgba(47,129,247,0.25);}
+.btn-login:active{transform:scale(0.98);}
+
+.error-msg{
+  background:var(--danger-soft);
+  border:1px solid rgba(218,54,51,0.25);
+  color:#f77;border-radius:8px;
+  padding:10px 14px;font-size:13px;
+  margin-bottom:20px;
+  animation:shake 0.35s ease-in-out;
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0);}
+  20%,60%{transform:translateX(-6px);}
+  40%,80%{transform:translateX(6px);}
+}
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="logo"><span class="dot"></span> Net-PY</div>
+  <div class="subtitle">Network monitor — authenticate to continue</div>
+  {% if error %}
+  <div class="error-msg">{{ error }}</div>
+  {% endif %}
+  <form method="POST" action="/login">
+    <div class="field">
+      <label for="user">Username</label>
+      <input id="user" name="username" type="text" placeholder="admin" autocomplete="username" autofocus>
+    </div>
+    <div class="field">
+      <label for="pass">Password</label>
+      <input id="pass" name="password" type="password" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="btn-login" type="submit">Sign In</button>
+  </form>
+</div>
+</body>
+</html>

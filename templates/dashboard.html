@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Net-PY Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#07090d;--panel:#0d1117;--border:#1b2230;--border-hl:#30363d;
+  --text:#e6edf3;--muted:#484f58;--accent:#2f81f7;--accent-glow:rgba(47,129,247,0.15);
+  --danger:#da3633;--green:#2ea043;--green-soft:rgba(46,160,67,0.12);
+  --orange:#d29922;
+}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+  min-height:100vh;
+}
+
+/* top bar */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 28px;
+  background:var(--panel);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);
+}
+.topbar-left{display:flex;align-items:center;gap:14px;}
+.brand{
+  font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;
+  display:flex;align-items:center;gap:8px;letter-spacing:-0.5px;
+}
+.brand .dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 8px var(--green);
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.nic-group{display:flex;align-items:center;gap:8px;}
+.nic-label{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;
+}
+.nic-select{
+  background:var(--bg);border:1px solid var(--border);
+  color:var(--text);padding:7px 12px;border-radius:6px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  cursor:pointer;outline:none;min-width:200px;
+  transition:border-color 0.2s;
+}
+.nic-select:focus{border-color:var(--accent);}
+.nic-select option{background:var(--panel);color:var(--text);}
+.nic-status{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:4px 10px;border-radius:4px;
+  display:flex;align-items:center;gap:6px;
+}
+.nic-status.active{color:var(--green);background:var(--green-soft);}
+.nic-status.stopped{color:var(--muted);background:rgba(255,255,255,0.03);}
+.nic-status .indicator{
+  width:6px;height:6px;border-radius:50%;
+  background:currentColor;
+}
+.btn-sm{
+  padding:7px 14px;border-radius:6px;border:1px solid var(--border);
+  background:transparent;color:var(--text);cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  transition:all 0.15s;
+}
+.btn-sm:hover{background:rgba(255,255,255,0.04);border-color:var(--border-hl);}
+.btn-logout{border-color:rgba(218,54,51,0.3);color:var(--danger);}
+.btn-logout:hover{background:rgba(218,54,51,0.08);}
+.user-badge{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
+  display:flex;align-items:center;gap:6px;
+}
+.user-badge .avatar{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:600;
+}
+.sep{width:1px;height:24px;background:var(--border);}
+
+/* container */
+.container{max-width:1280px;margin:auto;padding:24px 28px;}
+
+/* updated badge */
+.meta-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;}
+.updated-badge{
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);
+}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;}
+.stat{
+  background:var(--panel);border:1px solid var(--border);
+  padding:18px 20px;border-radius:10px;
+  transition:border-color 0.2s;
+}
+.stat:hover{border-color:var(--border-hl);}
+.stat .label{
+  color:var(--muted);font-size:11px;
+  font-family:'JetBrains Mono',monospace;
+  text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;
+}
+.stat .value{font-size:28px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;}
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:10px;padding:16px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border-hl);}
+.span12{grid-column:span 12;}.span8{grid-column:span 8;}.span4{grid-column:span 4;}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.card-header h2{
+  font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;
+  letter-spacing:-0.2px;
+}
+
+/* tables */
+.table-wrap{overflow:auto;border:1px solid var(--border);border-radius:8px;}
+.table-wrap.scrollable{max-height:320px;overflow-y:auto;}
+table{width:100%;border-collapse:collapse;}
+th,td{
+  padding:9px 12px;border-bottom:1px solid var(--border);
+  text-align:left;white-space:nowrap;
+  font-size:13px;
+}
+th{
+  color:var(--muted);position:sticky;top:0;background:var(--panel);z-index:1;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  text-transform:uppercase;letter-spacing:0.5px;font-weight:500;
+}
+td{font-family:'JetBrains Mono',monospace;font-size:12px;}
+td.reason{white-space:normal;word-break:break-word;min-width:180px;max-width:340px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;}
+tr:last-child td{border-bottom:none;}
+tbody tr{transition:background 0.1s;}
+tbody tr:hover{background:rgba(255,255,255,0.02);}
+
+/* buttons */
+.btn{
+  background:var(--danger);color:#fff;border:none;
+  padding:6px 14px;border-radius:6px;cursor:pointer;
+  font-size:12px;font-family:'JetBrains Mono',monospace;
+  font-weight:500;transition:opacity 0.15s;
+}
+.btn:hover{opacity:0.8;}
+
+/* log */
+.log{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:8px;padding:12px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  max-height:280px;overflow:auto;white-space:pre-wrap;
+  line-height:1.6;color:var(--muted);
+}
+.muted{color:var(--muted);}
+
+/* inline name editing */
+.btn-edit{
+  background:transparent;border:1px solid var(--border);color:var(--muted);
+  width:28px;height:28px;border-radius:6px;cursor:pointer;
+  font-size:14px;display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;padding:0;
+}
+.btn-edit:hover{background:rgba(255,255,255,0.04);border-color:var(--border-hl);color:var(--text);}
+.name-input{
+  width:100%;padding:5px 8px;
+  background:var(--bg);border:1px solid var(--accent);
+  border-radius:4px;color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  outline:none;box-shadow:0 0 0 2px var(--accent-glow);
+}
+td.dev-name{min-width:120px;max-width:200px;}
+
+/* toast notification */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  padding:12px 20px;border-radius:8px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:var(--panel);border:1px solid var(--border);
+  box-shadow:0 8px 32px rgba(0,0,0,0.4);
+  transform:translateY(80px);opacity:0;
+  transition:all 0.3s cubic-bezier(0.16,1,0.3,1);
+}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(46,160,67,0.4);color:var(--green);}
+.toast.error{border-color:rgba(218,54,51,0.4);color:var(--danger);}
+
+@media(max-width:900px){
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .span4,.span8,.span12{grid-column:span 12;}
+  .topbar{flex-wrap:wrap;gap:10px;}
+}
+
+/* nmap scanner */
+.nmap-panel{margin-top:14px;}
+.scan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-bottom:16px;}
+.scan-preset{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;cursor:pointer;transition:all 0.15s;
+  position:relative;
+}
+.scan-preset:hover{border-color:var(--accent);background:rgba(47,129,247,0.04);}
+.scan-preset.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow);}
+.scan-preset .preset-label{
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  margin-bottom:4px;display:flex;align-items:center;gap:8px;
+}
+.scan-preset .preset-desc{
+  font-size:12px;color:var(--muted);line-height:1.4;
+  font-family:'IBM Plex Sans',system-ui,sans-serif;
+}
+.scan-preset .preset-cmd{
+  font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);
+  margin-top:8px;padding:4px 8px;background:rgba(255,255,255,0.02);
+  border-radius:4px;opacity:0.7;
+}
+.scan-controls{
+  display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;
+}
+.scan-input{
+  flex:1;min-width:200px;padding:9px 14px;
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:6px;color:var(--text);
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  outline:none;transition:border-color 0.2s;
+}
+.scan-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-glow);}
+.scan-input::placeholder{color:var(--muted);}
+.btn-scan{
+  padding:9px 20px;border-radius:6px;border:none;
+  background:var(--accent);color:#fff;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;
+  transition:all 0.15s;display:flex;align-items:center;gap:8px;
+}
+.btn-scan:hover{background:#1a6fe0;box-shadow:0 4px 16px rgba(47,129,247,0.25);}
+.btn-scan:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-scan .spinner{
+  width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;border-radius:50%;
+  animation:spin 0.6s linear infinite;display:none;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn-scan.loading .spinner{display:block;}
+.scan-results-list{display:flex;flex-direction:column;gap:10px;}
+.scan-result{
+  background:var(--bg);border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;transition:border-color 0.2s;
+}
+.scan-result:hover{border-color:var(--border-hl);}
+.scan-result-header{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:10px 14px;cursor:pointer;
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+}
+.scan-result-header:hover{background:rgba(255,255,255,0.02);}
+.scan-result-meta{display:flex;align-items:center;gap:10px;}
+.scan-status{
+  padding:2px 8px;border-radius:4px;font-size:10px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.5px;
+}
+.scan-status.running{color:var(--accent);background:var(--accent-glow);}
+.scan-status.done{color:var(--green);background:var(--green-soft);}
+.scan-status.error,.scan-status.timeout{color:var(--danger);background:rgba(218,54,51,0.12);}
+.scan-result-output{
+  display:none;padding:0 14px 14px;
+}
+.scan-result-output.open{display:block;}
+.scan-output-pre{
+  background:rgba(0,0,0,0.3);border:1px solid var(--border);
+  border-radius:6px;padding:12px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  line-height:1.6;color:var(--text);
+  max-height:400px;overflow:auto;white-space:pre-wrap;word-break:break-all;
+}
+.scan-result-cmd{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);
+}
+.nmap-unavailable{
+  padding:20px;text-align:center;color:var(--orange);
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:rgba(210,153,34,0.06);border:1px solid rgba(210,153,34,0.2);
+  border-radius:8px;
+}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="topbar-left">
+    <div class="brand"><span class="dot"></span> Net-PY</div>
+    <div class="sep"></div>
+    <div class="nic-group">
+      <span class="nic-label">NIC</span>
+      <select class="nic-select" id="nicSelect" onchange="switchNic()">
+        <option value="">All interfaces</option>
+      </select>
+      <div class="nic-status stopped" id="nicStatus">
+        <span class="indicator"></span>
+        <span id="nicStatusText">loading…</span>
+      </div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="user-badge">
+      <div class="avatar">{{ user_initial }}</div>
+      {{ username }}
+    </div>
+    <div class="sep"></div>
+    <button class="btn-sm btn-logout" onclick="location.href='/logout'">Logout</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="meta-row">
+    <span class="updated-badge" id="lastUpdated">Updated: --</span>
+  </div>
+  <section class="stats">
+    <div class="stat"><div class="label">Trusted Bindings</div><div class="value" id="bindingCount">0</div></div>
+    <div class="stat"><div class="label">Known Devices</div><div class="value" id="deviceCount">0</div></div>
+    <div class="stat"><div class="label">Alerts</div><div class="value" id="alertCount">0</div></div>
+    <div class="stat"><div class="label">Events</div><div class="value" id="dropCount">0</div></div>
+  </section>
+  <div class="grid">
+    <section class="card span4">
+      <div class="card-header"><h2>Trusted Bindings</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>IP</th><th>MAC</th></tr></thead>
+        <tbody id="bindingsBody"></tbody>
+      </table></div>
+    </section>
+    <section class="card span8">
+      <div class="card-header">
+        <h2>Dropped / Suspicious Events</h2>
+        <button class="btn" onclick="clearEvents()">Clear Events</button>
+      </div>
+      <div class="table-wrap scrollable"><table>
+        <thead><tr><th>Time</th><th>Port</th><th>IP</th><th>MAC</th><th>Reason</th></tr></thead>
+        <tbody id="eventsBody"></tbody>
+      </table></div>
+    </section>
+    <section class="card span12">
+      <div class="card-header">
+        <h2>New Device Alerts</h2>
+        <button class="btn" onclick="clearAlerts()">Clear Alerts</button>
+      </div>
+      <div class="table-wrap scrollable"><table>
+        <thead><tr><th>Time</th><th>Type</th><th>IP</th><th>MAC</th><th>Message</th></tr></thead>
+        <tbody id="alertsBody"></tbody>
+      </table></div>
+    </section>
+    <section class="card span12">
+      <div class="card-header">
+        <h2>Known Devices</h2>
+        <button class="btn" onclick="clearDevices()">Clear Devices</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>IP</th><th>MAC</th><th>First Seen</th><th>Last Seen</th><th style="width:60px;"></th></tr></thead>
+        <tbody id="devicesBody"></tbody>
+      </table></div>
+    </section>
+    <section class="card span12">
+      <div class="card-header">
+        <h2>Syslog Feed</h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="muted" style="font-family:'JetBrains Mono',monospace;font-size:11px;" id="syslogCount">0 lines</span>
+          <button class="btn" onclick="clearSyslog()">Clear Log</button>
+        </div>
+      </div>
+      <div class="table-wrap scrollable" style="max-height:360px;">
+        <table>
+          <thead><tr><th style="width:80px;">Time</th><th style="width:120px;">Source</th><th>Message</th></tr></thead>
+          <tbody id="syslogBody"></tbody>
+        </table>
+      </div>
+    </section>
+    <!-- Nmap Scanner -->
+    <section class="card span12 nmap-panel">
+      <div class="card-header">
+        <h2>&#9881; Network Scan</h2>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="muted" style="font-family:'JetBrains Mono',monospace;font-size:11px;" id="scanCount">0 scans</span>
+          <button class="btn" onclick="clearScans()">Clear Results</button>
+        </div>
+      </div>
+      <div id="nmapContent">
+        <div class="scan-grid" id="scanPresets"></div>
+        <div class="scan-controls">
+          <input class="scan-input" id="scanTarget" type="text" placeholder="Target (IP or CIDR — auto-filled from preset)">
+          <button class="btn-scan" id="scanBtn" onclick="runScan()" disabled>
+            <span class="spinner"></span>
+            <span class="btn-text">Select a scan</span>
+          </button>
+        </div>
+        <div class="scan-results-list" id="scanResults"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const escHtml = s => {
+  const d = document.createElement("div");
+  d.textContent = s ?? "";
+  return d.innerHTML;
+};
+const row = cells => `<tr>${cells.map(c=>`<td>${c}</td>`).join("")}</tr>`;
+const empty = (cols, msg) => `<tr><td colspan="${cols}" class="muted">${msg}</td></tr>`;
+const tableRows = (items, renderItem, cols, msg) => items.length ? items.map(renderItem).join("") : empty(cols, msg);
+
+async function fetchJson(url, options){
+  const response = await fetch(url, options);
+  return response.json();
+}
+
+async function postJson(url, body){
+  return fetchJson(url, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(body)
+  });
+}
+
+async function runAction(url, successMsg, errorMsg, {body=null, reload=true} = {}){
+  try{
+    const data = body === null
+      ? await fetchJson(url, {method:"POST"})
+      : await postJson(url, body);
+    if(data.status && data.status !== "ok"){
+      toast(data.error || errorMsg, "error");
+      return data;
+    }
+    if(reload) await loadDashboard();
+    if(successMsg) toast(successMsg);
+    return data;
+  }catch(e){
+    toast(errorMsg, "error");
+    return null;
+  }
+}
+
+function toast(msg, type="success"){
+  const t=$("toast"); t.textContent=msg;
+  t.className="toast "+type+" show";
+  setTimeout(()=>t.classList.remove("show"),2500);
+}
+
+/* ── NIC management ── */
+async function loadNics(){
+  try{
+    const d = await fetchJson("/api/nics");
+    const sel = $("nicSelect");
+    sel.innerHTML = '<option value="">All interfaces</option>';
+    (d.nics||[]).forEach(n=>{
+      const addrs = n.addrs.length ? ` (${n.addrs.join(", ")})` : "";
+      const opt = document.createElement("option");
+      opt.value = n.name; opt.textContent = n.name + addrs;
+      sel.appendChild(opt);
+    });
+    if(d.active_nic){ sel.value = d.active_nic; }
+    updateNicStatus(d.sniffer_running, d.active_nic);
+  }catch(e){ console.error("NIC load error",e); }
+}
+
+function updateNicStatus(running, iface){
+  const s=$("nicStatus"), t=$("nicStatusText");
+  if(running){
+    s.className="nic-status active";
+    t.textContent="sniffing"+(iface ? " · "+iface : " · all");
+  }else{
+    s.className="nic-status stopped";
+    t.textContent="stopped";
+  }
+}
+
+async function switchNic(){
+  const iface = $("nicSelect").value;
+  const d = await runAction("/api/nics/switch", "Sniffer switched to "+(iface||"all interfaces"), "Network error", {
+    body:{iface: iface||null},
+    reload:false
+  });
+  if(d?.status === "ok") updateNicStatus(true, iface);
+}
+
+/* ── Dashboard rendering ── */
+
+// Saves and restores scrollTop on all .scrollable containers around a re-render
+function preserveScroll(fn){
+  const scrollables = document.querySelectorAll(".table-wrap.scrollable");
+  const positions = new Map();
+  scrollables.forEach(el => positions.set(el, el.scrollTop));
+  fn();
+  positions.forEach((top, el) => { el.scrollTop = top; });
+}
+
+function renderBindings(bs){
+  $("bindingCount").textContent = bs.length;
+  $("bindingsBody").innerHTML = tableRows(bs, b => row([b.ip,b.mac]), 2, "No trusted bindings");
+}
+function renderDevices(ds){
+  $("deviceCount").textContent = ds.length;
+  $("devicesBody").innerHTML = tableRows(ds, d => {
+    const name = escHtml(d.name||"");
+    const nameDisplay = name || `<span class="muted" style="font-style:italic;font-family:'IBM Plex Sans',sans-serif;">unnamed</span>`;
+    return `<tr>
+      <td class="dev-name" id="name-${d.mac}">${nameDisplay}</td>
+      <td>${d.ip}</td><td>${d.mac}</td><td>${d.first_seen}</td><td>${d.last_seen}</td>
+      <td><button class="btn-edit" onclick="editName('${d.mac}','${name}')">&#9998;</button></td>
+    </tr>`;
+  }, 6, "No devices seen");
+}
+function renderAlerts(as){
+  $("alertCount").textContent = as.length;
+  $("alertsBody").innerHTML = tableRows(as, a => row([a.time,a.type,a.ip,a.mac,a.message]), 5, "No alerts");
+}
+function renderEvents(es){
+  $("dropCount").textContent = es.length;
+  $("eventsBody").innerHTML = tableRows(
+    es,
+    e => `<tr><td>${e.time||"-"}</td><td>${e.port||"-"}</td><td>${e.senderIp||"-"}</td><td>${e.senderMac||"-"}</td><td class="reason">${e.reason||"-"}</td></tr>`,
+    5,
+    "No events"
+  );
+}
+function renderSyslog(logs){
+  $("syslogCount").textContent = logs.length + " lines";
+  $("syslogBody").innerHTML = logs.length
+    ? logs.slice().reverse().map(l =>
+        `<tr><td>${l.time||"-"}</td><td>${l.source||"-"}</td><td class="reason">${escHtml(l.message||"-")}</td></tr>`
+      ).join("")
+    : empty(3,"No syslog data — waiting for UDP messages on port 514");
+}
+
+/* ── Inline device naming ── */
+function editName(mac, current){
+  const cell = $("name-"+mac);
+  if(!cell) return;
+  cell.innerHTML = `<input class="name-input" type="text" value="${current}"
+    onkeydown="if(event.key==='Enter')saveName('${mac}',this.value);if(event.key==='Escape'){loadDashboard();}"
+    onblur="saveName('${mac}',this.value)" autofocus>`;
+  cell.querySelector("input").focus();
+}
+async function saveName(mac, name){
+  const trimmed = name.trim();
+  await runAction("/api/device/rename", trimmed ? "Device named: "+trimmed : "Name cleared", "Network error", {
+    body:{mac, name: trimmed},
+    reload:false
+  });
+  await loadDashboard();
+}
+
+/* ── Clear functions ── */
+async function clearAlerts(){
+  await runAction("/api/clear-alerts", "Alerts cleared", "Failed to clear alerts");
+}
+async function clearSyslog(){
+  await runAction("/api/clear-syslog", "Syslog cleared", "Failed to clear syslog");
+}
+async function clearEvents(){
+  await runAction("/api/clear-events", "Events cleared", "Failed to clear events");
+}
+async function clearDevices(){
+  if(!confirm("Clear all known devices? This cannot be undone.")) return;
+  await runAction("/api/clear-devices", "Devices cleared", "Failed to clear devices");
+}
+async function loadDashboard(){
+  try {
+    const d = await fetchJson("/api/events");
+    if(d.error){ location.href="/login"; return; }
+    preserveScroll(() => {
+      renderBindings(d.trusted_bindings||[]);
+      renderDevices(d.devices||[]);
+      renderAlerts(d.alerts||[]);
+      renderEvents(d.events||[]);
+      renderSyslog(d.syslog_log||[]);
+    });
+    $("lastUpdated").textContent = "Updated: "+(d.updated||"--");
+  } catch(e){ console.error("Dashboard load error",e); }
+}
+
+loadNics();
+loadDashboard();
+loadNmapPresets();
+setInterval(loadDashboard, 10000);
+setInterval(pollScans, 3000);
+
+/* ── Nmap Scanner ── */
+let _selectedScan = null;
+let _presets = [];
+async function loadNmapPresets(){
+  try{
+    const d = await fetchJson("/api/nmap/presets");
+    _presets = d.presets || [];
+    if(!d.nmap_installed){
+      $("nmapContent").innerHTML = '<div class="nmap-unavailable">⚠ nmap is not installed on this system.<br>Download from <b>nmap.org/download</b> and ensure "Register Nmap Path" is checked, then restart Net-PY.</div>';
+      return;
+    }
+    renderPresets();
+  }catch(e){ console.error("Nmap presets error",e); }
+}
+
+function renderPresets(){
+  $("scanPresets").innerHTML = _presets.map(p => `
+    <div class="scan-preset" data-id="${p.id}" onclick="selectPreset('${p.id}')">
+      <div class="preset-label">${escHtml(p.label)}</div>
+      <div class="preset-desc">${escHtml(p.desc)}</div>
+      <div class="preset-cmd">${escHtml(p.cmd_template)}</div>
+    </div>
+  `).join("");
+}
+
+function selectPreset(id){
+  _selectedScan = id;
+  document.querySelectorAll(".scan-preset").forEach(el => {
+    el.classList.toggle("selected", el.dataset.id === id);
+  });
+  const preset = _presets.find(p => p.id === id);
+  if(preset){
+    $("scanTarget").value = preset.default_target;
+    $("scanTarget").placeholder = preset.default_target;
+    $("scanBtn").disabled = false;
+    $("scanBtn").querySelector(".btn-text").textContent = "Run " + preset.label;
+  }
+}
+
+async function runScan(){
+  if(!_selectedScan) return;
+  const btn = $("scanBtn");
+  btn.classList.add("loading");
+  btn.disabled = true;
+  try{
+    const d = await postJson("/api/nmap/scan", {
+      scan_type: _selectedScan,
+      target: $("scanTarget").value.trim()
+    });
+    if(d.status==="ok"){
+      toast("Scan started: " + (d.cmd||""));
+      pollScans();
+    }else{
+      toast(d.error||"Failed to start scan","error");
+    }
+  }catch(e){ toast("Network error","error"); }
+  finally{
+    btn.classList.remove("loading");
+    btn.disabled = false;
+  }
+}
+
+async function pollScans(){
+  try{
+    const d = await fetchJson("/api/nmap/results");
+    const scans = d.scans || [];
+    $("scanCount").textContent = scans.length + " scan" + (scans.length===1?"":"s");
+
+    // Build a fingerprint of the data — only re-render if something changed
+    const fingerprint = scans.map(s => s.id+"|"+s.status+"|"+(s.output||"").length+"|"+(s.stderr||"").length).join(";");
+    if(fingerprint !== _lastScanFingerprint){
+      _lastScanFingerprint = fingerprint;
+      renderScanResults(scans);
+    }
+  }catch(e){ console.error("Poll scans error",e); }
+}
+
+let _lastScanFingerprint = "";
+
+function renderScanResults(scans){
+  const container = $("scanResults");
+  if(!scans.length){
+    container.innerHTML = '<div class="muted" style="padding:12px;font-family:JetBrains Mono,monospace;font-size:12px;">No scan results yet — select a preset and run a scan</div>';
+    return;
+  }
+
+  // Snapshot open states and scroll positions before re-render
+  const openIds = new Set();
+  const scrollPositions = {};
+  document.querySelectorAll(".scan-result-output.open").forEach(el => {
+    const id = el.dataset.scanid;
+    if(id){
+      openIds.add(id);
+      const pre = el.querySelector(".scan-output-pre");
+      if(pre) scrollPositions[id] = pre.scrollTop;
+    }
+  });
+
+  container.innerHTML = scans.map(s => {
+    const isOpen = openIds.has(s.id);
+    const output = s.output || s.stderr || "(no output)";
+    const arrow = isOpen ? "&#9660;" : "&#9654;";
+    return `<div class="scan-result">
+      <div class="scan-result-header" onclick="toggleScanOutput('${s.id}')">
+        <div class="scan-result-meta">
+          <span>${arrow}</span>
+          <span class="scan-status ${s.status}">${s.status}</span>
+          <span>${escHtml(s.label||s.scan_type)}</span>
+          <span class="scan-result-cmd">$ ${escHtml(s.cmd||"")}</span>
+        </div>
+        <span class="muted" style="font-size:11px;">${s.started||""}</span>
+      </div>
+      <div class="scan-result-output ${isOpen?"open":""}" data-scanid="${s.id}">
+        <pre class="scan-output-pre">${escHtml(output)}</pre>
+      </div>
+    </div>`;
+  }).join("");
+
+  // Restore scroll positions
+  for(const [id, top] of Object.entries(scrollPositions)){
+    const pre = document.querySelector(`.scan-result-output[data-scanid="${id}"] .scan-output-pre`);
+    if(pre) pre.scrollTop = top;
+  }
+}
+
+function toggleScanOutput(scanId){
+  const el = document.querySelector(`.scan-result-output[data-scanid="${scanId}"]`);
+  if(el) el.classList.toggle("open");
+  // Update arrow
+  const header = el?.previousElementSibling;
+  if(header){
+    const arrow = header.querySelector("span:first-child");
+    if(arrow) arrow.innerHTML = el.classList.contains("open") ? "&#9660;" : "&#9654;";
+  }
+}
+
+async function clearScans(){
+  const data = await runAction("/api/nmap/clear", "Scan results cleared", "Failed to clear scans", {reload:false});
+  if(data) pollScans();
+}
+</script>
+</body>
+</html>
