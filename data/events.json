@@ -1,0 +1,194 @@
+{
+  "updated": "2026-04-17 17:47:36",
+  "trusted_bindings": [
+    {
+      "ip": "192.168.1.254",
+      "mac": "50:95:51:93:A2:C0"
+    },
+    {
+      "ip": "192.168.1.119",
+      "mac": "A8:A1:59:60:49:23"
+    }
+  ],
+  "devices": [
+    {
+      "mac": "E8:68:E7:48:E9:74",
+      "ip": "192.168.1.172",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:26",
+      "last_seen": "2026-04-17 17:47:36"
+    },
+    {
+      "mac": "70:03:9F:4A:40:49",
+      "ip": "192.168.1.217",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:30",
+      "last_seen": "2026-04-17 17:47:30"
+    },
+    {
+      "mac": "A8:A1:59:60:49:23",
+      "ip": "192.168.1.119",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:33",
+      "last_seen": "2026-04-17 17:47:17"
+    },
+    {
+      "mac": "08:B4:B1:FE:72:7A",
+      "ip": "192.168.1.100",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:46:36"
+    },
+    {
+      "mac": "D8:CB:8A:60:97:88",
+      "ip": "192.168.1.117",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:46:43"
+    },
+    {
+      "mac": "50:95:51:93:A2:C2",
+      "ip": "192.168.1.120",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:08"
+    },
+    {
+      "mac": "F4:8E:38:01:0C:87",
+      "ip": "192.168.1.118",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:46:36"
+    },
+    {
+      "mac": "08:84:9D:F5:05:78",
+      "ip": "192.168.1.163",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:26"
+    },
+    {
+      "mac": "7C:78:B2:3C:F3:30",
+      "ip": "192.168.1.200",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:12"
+    },
+    {
+      "mac": "50:95:51:93:A2:C0",
+      "ip": "192.168.1.254",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:05"
+    },
+    {
+      "mac": "E0:62:34:F9:CB:BD",
+      "ip": "192.168.1.192",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:26"
+    },
+    {
+      "mac": "D0:3F:27:BD:43:EC",
+      "ip": "192.168.1.159",
+      "name": "",
+      "first_seen": "2026-04-17 17:46:36",
+      "last_seen": "2026-04-17 17:47:17"
+    }
+  ],
+  "alerts": [
+    {
+      "time": "17:46:25",
+      "type": "new_device",
+      "ip": "192.168.1.192",
+      "mac": "E0:62:34:F9:CB:BD",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:26",
+      "type": "new_device",
+      "ip": "192.168.1.172",
+      "mac": "E8:68:E7:48:E9:74",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:30",
+      "type": "new_device",
+      "ip": "192.168.1.217",
+      "mac": "70:03:9F:4A:40:49",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:33",
+      "type": "new_device",
+      "ip": "192.168.1.119",
+      "mac": "A8:A1:59:60:49:23",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.100",
+      "mac": "08:B4:B1:FE:72:7A",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.117",
+      "mac": "D8:CB:8A:60:97:88",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.120",
+      "mac": "50:95:51:93:A2:C2",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.118",
+      "mac": "F4:8E:38:01:0C:87",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.163",
+      "mac": "08:84:9D:F5:05:78",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.200",
+      "mac": "7C:78:B2:3C:F3:30",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.254",
+      "mac": "50:95:51:93:A2:C0",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.192",
+      "mac": "E0:62:34:F9:CB:BD",
+      "message": "New device connected"
+    },
+    {
+      "time": "17:46:36",
+      "type": "new_device",
+      "ip": "192.168.1.159",
+      "mac": "D0:3F:27:BD:43:EC",
+      "message": "New device connected"
+    }
+  ],
+  "events": [],
+  "syslog_log": []
+}
