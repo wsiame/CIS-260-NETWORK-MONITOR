@@ -1,133 +1,180 @@
-Readme · MD
-Copy
-
 # Net-PY
- 
-Net-PY is a Python-based network monitoring dashboard that combines three functions into one application:
- 
-- A **Flask web dashboard** for viewing network activity
-- A **live ARP packet sniffer** using Scapy
-- A **syslog UDP listener** for receiving Dynamic ARP Inspection (DAI) drops from a switch
- 
-The application helps detect suspicious ARP behavior, track devices seen on the network, and display alerts and events in a web interface.
- 
----
- 
+
+Net-PY i.s a Python network monitoring dashboard that combines:
+
+- A Flask web dashboard
+- A live ARP sniffer using Scapy
+- A syslog listener for switch DAI events
+- A built-in network scan view powered by Nmap
+
+It helps you watch devices on your subnet, detect suspicious ARP activity, review syslog events, and run a combined network scan from the browser.
+
 ## Features
- 
-- Monitors ARP traffic in real time with Scapy
-- Receives syslog messages on UDP port 514
-- Tracks known devices by MAC and IP address
-- Detects duplicate IP usage
-- Flags trusted binding violations
-- Stores devices, alerts, and events in a JSON file
-- Displays all data in a browser-based dashboard
-- Cross-platform support (Windows & Linux)
- 
----
- 
-## Installation
- 
+
+- Login-protected dashboard
+- Live ARP monitoring
+- NIC selection from the UI
+- Syslog listener on UDP port `514`
+- Device tracking by MAC and IP
+- Duplicate IP detection
+- Trusted binding violation detection
+- JSON persistence to `data/events.json`
+- Combined `Network Scan` from the dashboard
+- Windows and Linux support
+
+## Files
+
+- `Net-Py.py`  
+  Main application
+- `templates/dashboard.html`  
+  Dashboard UI
+- `templates/login.html`  
+  Login page
+- `data/events.json`  
+  Stored state
+
+## Requirements
+
+Install Python packages:
+
+```bash
+python -m pip install flask scapy psutil
+```
+
+`psutil` is optional, but it improves NIC detection.
+
 ### Windows
- 
-#### Prerequisites
- 
-**1. Python 3.14.3**
- 
-Download and install Python from the official website:
-https://www.python.org/downloads/release/python-3143/
- 
-During installation, make sure to check **Add Python to PATH**.
- 
-**2. Npcap 1.87 (packet capture driver)**
- 
-Download and install Npcap:
-https://npcap.com/dist/npcap-1.87.exe
- 
-During installation, make sure to check **Install Npcap in WinPcap API-compatible Mode**.
- 
-> Npcap is required for packet sniffing to work on Windows.
- 
-**3. Python dependencies**
- 
-Install Flask and Scapy using pip:
- 
-```
-python -m pip install flask scapy
-```
- 
-#### Running on Windows
- 
-Open a terminal **as Administrator** (required for packet capture) and run:
- 
-```
-python net-py_v4.py
-```
- 
-Then open your browser to `http://localhost:5000/`.
- 
----
- 
+
+- Python 3.x
+- [Npcap](https://npcap.com/)
+- Optional: [Nmap](https://nmap.org/download.html) for dashboard scans
+
+If packet capture is blocked, run the app in an elevated terminal.
+
 ### Linux
- 
-#### Prerequisites
- 
-Install Flask and Scapy:
- 
+
+- Python 3.x
+- Root or equivalent privileges for packet capture and UDP port `514`
+- Optional: Nmap for dashboard scans
+
+Example:
+
+```bash
+pip3 install flask scapy psutil
 ```
-pip3 install flask scapy
+
+## Run
+
+### Windows
+
+```bash
+python "Net-Py .py"
 ```
- 
-#### Running on Linux
- 
-Net-PY requires root privileges to capture network packets and bind to UDP port 514:
- 
+
+### Linux
+
+```bash
+sudo python3 "Net-Py .py"
 ```
-sudo python3 net-py_v4.py
-```
- 
-Then open your browser to `http://localhost:5000/`.
- 
----
- 
+
+Then open:
+
+[http://localhost:5000/](http://localhost:5000/)
+
+Net-PY listens on `0.0.0.0:5000`.
+
+## Default Login
+
+Current code defaults:
+
+- Username: `admin`
+- Password: `netpy2024`
+
+Change this before using Net-PY on a real network.
+
 ## Configuration
- 
-Key settings are defined at the top of `net-py_v4.py`:
- 
+
+Main settings are near the top of `Net-Py .py`.
+
 | Setting | Default | Description |
-|---------|---------|-------------|
-| `SUBNET` | `192.168.1.0/24` | Monitored network subnet |
-| `TRUSTED_BINDINGS` | See source | IP-to-MAC mappings that are considered trusted |
-| `SYSLOG_PORT` | `514` | UDP port for syslog listener |
-| `FLASK_PORT` | `5000` | Web dashboard port |
-| `MAX_EVENTS` | `500` | Maximum stored events |
-| `MAX_ALERTS` | `200` | Maximum stored alerts |
- 
-Edit `SUBNET` and `TRUSTED_BINDINGS` to match your network before running.
- 
----
- 
+|---|---|---|
+| `SUBNET` | `192.168.1.0/24` | Monitored subnet |
+| `TRUSTED_BINDINGS` | See source | Trusted IP-to-MAC mappings |
+| `SYSLOG_PORT` | `514` | Syslog listener port |
+| `FLASK_PORT` | `5000` | Dashboard port |
+| `MAX_EVENTS` | `500` | Retained events |
+| `MAX_ALERTS` | `200` | Retained alerts |
+| `MAX_SYSLOG_LOG` | `500` | Retained raw syslog lines |
+| `MAX_SCAN_RESULTS` | `50` | Retained scan results |
+
+Update `SUBNET` and `TRUSTED_BINDINGS` for your environment.
+
 ## How It Works
- 
-**ARP Sniffer** — Uses Scapy to passively capture ARP packets on the local interface. Each packet is checked against trusted bindings and logged as a device, event, or alert.
- 
-**Syslog Listener** — Listens on UDP port 514 for messages from network switches running Dynamic ARP Inspection. Parses DAI drop messages, Ethernet headers, ARP payloads, and link state changes.
- 
-**Flask Dashboard** — Serves a single-page web UI at `http://0.0.0.0:5000/` that auto-refreshes every 10 seconds. Displays trusted bindings, known devices, alerts, dropped/suspicious events, and a raw event log.
- 
-**Persistence** — All state (devices, events, alerts) is saved to `data/events.json` in the same directory as the script. Data is loaded on startup and written after every change.
- 
----
- 
-## API Endpoints
- 
+
+### ARP Sniffer
+
+Scapy captures ARP traffic and updates device history in real time. Net-PY records new devices, subnet mismatches, duplicate IP use, and trusted binding conflicts.
+
+### Syslog Listener
+
+Net-PY listens on UDP port `514` for Dynamic ARP Inspection messages from switches and adds those events into the dashboard.
+
+### Dashboard
+
+The dashboard shows:
+
+- Trusted bindings
+- Known devices
+- New device alerts
+- Suspicious or dropped events
+- Raw syslog lines
+- Network scan results
+
+Dashboard data refreshes automatically every 10 seconds.
+
+### Network Scan
+
+Net-PY includes one built-in scan preset:
+
+- `Network Scan`
+
+It combines host discovery, MAC/vendor lookup, and OS detection through Nmap, then shows the output in the dashboard.
+
+### Persistence
+
+Net-PY saves state to:
+
+`data/events.json`
+
+This includes devices, alerts, events, and syslog history.
+
+## API
+
 | Method | Endpoint | Description |
-|--------|----------|-------------|
-| `GET` | `/` | Web dashboard |
-| `GET` | `/api/events` | JSON payload of all devices, events, alerts, and trusted bindings |
-| `POST` | `/api/clear-alerts` | Clears all stored alerts |
- 
----
+|---|---|---|
+| `GET` | `/` | Dashboard page |
+| `GET` | `/login` | Login page |
+| `POST` | `/login` | Login submit |
+| `GET` | `/logout` | Logout |
+| `GET` | `/api/events` | Full dashboard payload |
+| `GET` | `/api/nics` | NIC list and sniffer status |
+| `POST` | `/api/nics/switch` | Switch sniffer interface |
+| `POST` | `/api/device/rename` | Rename a known device |
+| `POST` | `/api/clear-alerts` | Clear alerts |
+| `POST` | `/api/clear-events` | Clear events |
+| `POST` | `/api/clear-syslog` | Clear syslog history |
+| `POST` | `/api/clear-devices` | Clear known devices |
+| `GET` | `/api/nmap/presets` | List scan presets |
+| `POST` | `/api/nmap/scan` | Start a network scan |
+| `GET` | `/api/nmap/results` | Read scan results |
+| `POST` | `/api/nmap/clear` | Clear completed scan results |
+
+## Notes
+
+- Packet capture may require Administrator or root privileges.
+- Binding UDP port `514` may require elevated privileges.
+- Nmap must be installed for the dashboard scan feature.
+- Credentials are currently stored in source code.
  
 ## License
  
